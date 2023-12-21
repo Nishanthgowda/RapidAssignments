@@ -1,0 +1,86 @@
+﻿@model IEnumerable<RapidAssignments.Models.EmployeeNameHour>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.EmployeeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TotalHours)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+
+        if (item.TotalHours < 100)
+        {
+            <tr class="bg-warning">
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalHours)
+                </td>
+            </tr>
+        }
+        else
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmployeeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalHours)
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+
+<script type="text/javascript">
+    //here i have used CanvasJs piecharts to display pie chart for our data 
+
+
+    window.onload = function () {
+        var employeeData = @Html.Raw(Json.Encode(Model));
+        var dataPoints = [];
+        for (var i = 0; i <= employeeData.length - 1; i++) {
+            dataPoints.push({ y: parseInt(employeeData[i].TotalHours), indexLabel: employeeData[i].EmployeeName });
+        }
+
+            var chart = new CanvasJS.Chart("chartContainer",
+                {
+                theme: "light2",
+                title: {
+            text: "Employee Attendence"
+                },
+                data: [
+                    {
+            type: "pie",
+                        showInLegend: true,
+                        toolTipContent: "{y} - #percent %",
+                        yValueFormatString: "### Days",
+                        legendText: "{indexLabel}",
+                        dataPoints: dataPoints
+                    }
+                ]
+            });
+        chart.render();
+    }
+</script>
+<script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+
+
+
